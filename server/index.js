@@ -1,6 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config({
+    path: ".env.server"
+})
+
 import express from "express";
 
-const port = 3000;
+const port = process.env.PORT || 5000;
 const startupDate = new Date();
 
 const app = express();
