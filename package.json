@@ -19,8 +19,9 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "@azure/cosmos": "3.9.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "@azure/cosmos": "3.9.1"
+    "js-guid": "^1.0.2"
   }
 }

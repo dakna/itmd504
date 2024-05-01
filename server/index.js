@@ -3,6 +3,8 @@ dotenv.config({
     path: ".env.server"
 })
 
+import { seedApplications } from "./seed.js";
+
 import { CosmosClient } from "@azure/cosmos";
 
 const endpoint = process.env.COSMOS_DB_ENDPOINT;
@@ -51,5 +53,34 @@ app.get("/api/applications", async (_req, res) => {
      
   console.log(`${_req.path} returned \n${JSON.stringify(results)}\n`)
   res.status(200).json(results);
+  
+});
+
+app.post("/api/seed-applications", async (_req, res) => {
+  console.log(`requested ${_req.path}`);
+
+  try {
+
+    await client.databases.createIfNotExists({id: databaseId})
+    await client.database(databaseId).containers.createIfNotExists({ id: containerId, partitionKey })
+    
+    console.log(`Created database: ${databaseId}\nCreated container: ${containerId} `);
+
+    const container = client.database(databaseId).container(containerId);
+
+    let response = await container.items.upsert(seedApplications.SEED1);
+    console.log(`${_req.path} inserted application with id ${response.item.id}`);
+    
+    response = await container.items.upsert(seedApplications.SEED1);
+    console.log(`${_req.path} inserted application with id ${response.item.id}`);
+
+    res.status(200).send();
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send(err.message);
+
+  }
   
 });
