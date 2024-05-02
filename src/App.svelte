@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+  import { Card, CardHeader, CardBody, CardTitle, Container, Row, Col, Button } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
@@ -18,18 +19,27 @@
   </div>
   <h1>Vite + Svelte</h1>
 
-  <div class="card">
-    <Counter />
-  </div>
+  <Counter />
+  
 
   {#await fetchApplications}
 	<p>...waiting for applications</p>
   {:then applications}
+
 	    <p>Loaded {applications.length} applications</p>
       {#each applications as app}
-      <div><code>{JSON.stringify(app)}</code></div>
+      <Container fluid>
+        <Card>
+          <CardHeader>
+            <CardTitle>{app.firstName} {app.lastName}</CardTitle>
+          </CardHeader>
+        
+        <CardBody><code>{JSON.stringify(app)}</code></CardBody>        
+        </Card>
+      </Container>
       {/each}
-  {:catch error}
+  
+      {:catch error}
 	<p>An error occurred: {error}</p>
   {/await}
 

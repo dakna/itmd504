@@ -1,10 +1,13 @@
 <script>
+
+import { Button } from '@sveltestrap/sveltestrap';
+
   let count = 0
   const increment = () => {
     count += 1
   }
 </script>
 
-<button on:click={increment}>
+<Button outline color="primary" on:click={increment}>
   count is {count}
-</button>
+</Button>
