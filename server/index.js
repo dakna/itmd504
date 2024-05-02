@@ -3,6 +3,7 @@ dotenv.config({
     path: ".env.server"
 })
 
+import cors from "cors";
 import { seedApplications } from "./seed.js";
 
 import { CosmosClient } from "@azure/cosmos";
@@ -30,6 +31,7 @@ const port = process.env.PORT || 5000;
 const startupDate = new Date();
 
 const app = express();
+app.use(cors());
 
 app.listen(port, () => {
   console.log("API server listening on port", port);
