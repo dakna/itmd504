@@ -43,7 +43,7 @@ app.get("/api/applications", async (_req, res) => {
   console.log(`requested ${_req.path}`);
   
   const querySpec = {
-    query: 'SELECT r FROM root r',
+    query: 'SELECT * FROM a',
     parameters: []
   }
 
