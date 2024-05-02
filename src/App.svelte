@@ -2,6 +2,9 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
+
+  let fetchApplications = fetch('http://localhost:3000/api/applications').then((r) => r.json());
+  
 </script>
 
 <main>
@@ -19,13 +22,18 @@
     <Counter />
   </div>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+  {#await fetchApplications}
+	<p>...waiting for applications</p>
+  {:then applications}
+	    <p>Loaded {applications.length} applications</p>
+      {#each applications as app}
+      <div><code>{JSON.stringify(app)}</code></div>
+      {/each}
+  {:catch error}
+	<p>An error occurred: {error}</p>
+  {/await}
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+
 </main>
 
 <style>
