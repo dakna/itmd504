@@ -1,8 +1,25 @@
 <script lang="ts">
+
   import { Card, CardHeader, CardBody, CardTitle, Container, Row, Col, Button } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
+  import { onMount } from 'svelte';
+  import axios from 'axios';
+
+  let applications = [];
+
+  onMount( async() => {
+    getApplications();
+  })
+
+  async function getApplications () {
+    await axios.get('http://localhost:3000/api/applications').then( (r) => {
+      // console.log(`r.data ${JSON.stringify(r.data)}`);
+      applications = r.data;      
+    });
+  }
+
 
   let fetchApplications = fetch('http://localhost:3000/api/applications').then((r) => r.json());
   
@@ -22,7 +39,7 @@
   <Counter />
   
 
-  {#await fetchApplications}
+  {#await applications}
 	<p>...waiting for applications</p>
   {:then applications}
 
