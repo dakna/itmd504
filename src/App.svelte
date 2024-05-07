@@ -8,20 +8,22 @@
   import axios from 'axios';
 
   let applications = [];
+  let baseurl = 'http://localhost:3000/api';
 
   onMount( async() => {
     getApplications();
   })
 
-  async function getApplications () {
-    await axios.get('http://localhost:3000/api/applications').then( (r) => {
+  async function getApplications() {
+    await axios.get(`${baseurl}/applications`).then( (r) => {
       // console.log(`r.data ${JSON.stringify(r.data)}`);
       applications = r.data;      
     });
   }
 
-
-  let fetchApplications = fetch('http://localhost:3000/api/applications').then((r) => r.json());
+  async function deleteApplication(id, partitionKey) {
+    await axios.delete(`${baseurl}/applications/${id}/${partitionKey}`).then( () => getApplications());
+  }
   
 </script>
 
@@ -49,6 +51,7 @@
         <Card>
           <CardHeader>
             <CardTitle>{app.firstName} {app.lastName}</CardTitle>
+            <Button on:click={() => deleteApplication(app.id, app.partitionKey)}>Delete</Button>
           </CardHeader>
         
         <CardBody><code>{JSON.stringify(app)}</code></CardBody>        
