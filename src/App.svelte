@@ -1,6 +1,6 @@
 <script lang="ts">
 
-  import { Card, CardHeader, CardBody, CardTitle, Container, Row, Col, Button } from '@sveltestrap/sveltestrap';
+  import { Card, CardHeader, CardBody, CardTitle, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
@@ -8,7 +8,32 @@
   import axios from 'axios';
 
   let applications = [];
-  let baseurl = 'http://localhost:3000/api';
+  const baseurl = 'http://localhost:3000/api';
+  const baseReference = {
+        url: ''
+      };
+  const baseAddress = {
+        state: '',
+        city: '',
+      };
+
+  const baseApp = {
+        id: '',
+        collegeId: '',
+        partitionKey: '',
+        firstName: '',
+        lastName: 'Smith',
+        address: baseAddress,  
+        references: [],
+        motivation: '',
+        resumeUrl: '',
+      };
+
+    
+  let currentApp = baseApp;
+
+  let isModalOpen = false;
+  let toggleModal = () => (isModalOpen = !isModalOpen);
 
   onMount( async() => {
     getApplications();
@@ -23,6 +48,11 @@
 
   async function deleteApplication(id, partitionKey) {
     await axios.delete(`${baseurl}/applications/${id}/${partitionKey}`).then( () => getApplications());
+  }
+  function openModal(app) {
+    currentApp = app;
+    console.log(`openModal currentApp ${currentApp}`);
+    toggleModal();
   }
   
 </script>
@@ -51,6 +81,7 @@
         <Card>
           <CardHeader>
             <CardTitle>{app.firstName} {app.lastName}</CardTitle>
+            <Button on:click={() => openModal(app)}>Edit</Button>
             <Button on:click={() => deleteApplication(app.id, app.partitionKey)}>Delete</Button>
           </CardHeader>
         
@@ -63,7 +94,9 @@
 	<p>An error occurred: {error}</p>
   {/await}
 
-
+  <Modal body header="{currentApp.firstName} {currentApp.lastName}" isOpen={isModalOpen} toggle={toggleModal}>
+    <code>{JSON.stringify(currentApp)}</code>
+  </Modal>
 </main>
 
 <style>
