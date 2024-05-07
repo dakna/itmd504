@@ -37,29 +37,60 @@ app.listen(port, () => {
   console.log("API server listening on port", port);
 });
 
-app.get("/api/healthcheck", (_req, res) => {
+app.get("/api/healthcheck", (req, res) => {
   res.json({ message: `API is running since ${startupDate.toISOString()} using databaseId ${databaseId}, containerId ${containerId}` });
 });
 
-app.get("/api/applications", async (_req, res) => {
-  console.log(`requested ${_req.path}`);
+app.get("/api/applications", async (req, res) => {
+  console.log(`requested ${req.path}`);
   
-  const querySpec = {
-    query: 'SELECT * FROM a',
-    parameters: []
-  }
 
-  const { resources: results } = await container.items
-    .query(querySpec)
-    .fetchAll();
-     
-  console.log(`${_req.path} returned \n${JSON.stringify(results)}\n`)
-  res.status(200).json(results);
+  try {
+    const querySpec = {
+      query: 'SELECT * FROM a',
+      parameters: []
+    }
+
+    const { resources: results } = await container.items
+      .query(querySpec)
+      .fetchAll();
+      
+    console.log(`${req.path} returned \n${JSON.stringify(results)}\n`)
+    res.status(200).json(results);
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send(err.message);
+
+  }
   
 });
 
-app.post("/api/seed-applications", async (_req, res) => {
-  console.log(`requested ${_req.path}`);
+app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
+  console.log(`requested ${req.path}`);
+  
+
+  try {
+    const id = req.params.id;
+    const partitionKey = req.params.partitionKey;
+
+    const { item } = await container.item(id, partitionKey).delete();
+
+    console.log(`${req.path} deleted item ${item.id}`);
+    res.status(200).send();
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send(err.message);
+
+  }
+  
+});
+
+app.post("/api/seed-applications", async (req, res) => {
+  console.log(`requested ${req.path}`);
 
   try {
 
@@ -71,10 +102,10 @@ app.post("/api/seed-applications", async (_req, res) => {
     const container = client.database(databaseId).container(containerId);
 
     let response = await container.items.upsert(seedApplications.SEED1);
-    console.log(`${_req.path} inserted application with id ${response.item.id}`);
+    console.log(`${req.path} inserted application with id ${response.item.id}`);
     
     response = await container.items.upsert(seedApplications.SEED1);
-    console.log(`${_req.path} inserted application with id ${response.item.id}`);
+    console.log(`${req.path} inserted application with id ${response.item.id}`);
 
     res.status(200).send();
 
