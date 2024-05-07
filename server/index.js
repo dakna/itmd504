@@ -104,7 +104,7 @@ app.post("/api/seed-applications", async (req, res) => {
     let response = await container.items.upsert(seedApplications.SEED1);
     console.log(`${req.path} inserted application with id ${response.item.id}`);
     
-    response = await container.items.upsert(seedApplications.SEED1);
+    response = await container.items.upsert(seedApplications.SEED2);
     console.log(`${req.path} inserted application with id ${response.item.id}`);
 
     res.status(200).send();
