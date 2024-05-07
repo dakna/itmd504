@@ -72,10 +72,10 @@
   
 
   {#await applications}
-	<p>...waiting for applications</p>
+	<div class="load-info">...waiting for applications</div>
   {:then applications}
 
-	    <p>Loaded {applications.length} applications</p>
+	    <div class="load-info">Loaded {applications.length} applications</div>
       {#each applications as app}
       <Container fluid>
         <Card>
@@ -112,7 +112,7 @@
   .logo.svelte:hover {
     filter: drop-shadow(0 0 2em #ff3e00aa);
   }
-  .read-the-docs {
+  .load-info {
     color: #888;
   }
 </style>
