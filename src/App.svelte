@@ -108,12 +108,9 @@
         <CardBody>
           <Container>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">First Name:</Col>
-              <Col xs="2" class="text-start">{app.firstName}</Col>
-              <Col xs="2" class="text-start fw-bold">Last Name:</Col>
-              <Col xs="2" class="text-start">{app.lastName}</Col>
-              <Col xs="2" class="text-start fw-bold">Resume:</Col>
-              <Col xs="2" class="text-start long-text"><a target="new" href="{app.resumeUrl}">Download</a></Col>
+              <Col xs="2" class="text-start fw-bold">Name:</Col>
+              <Col xs="6" class="text-start">{app.firstName} {app.lastName}</Col>
+              <Col xs="4" class="text-end"><a target="new" href="{app.resumeUrl}">Download Resume</a></Col>
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">College:</Col>
@@ -124,7 +121,7 @@
               <Col xs="10" class="text-start">{app.address.city}, {app.address.state}</Col>
             </Row>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">Motivation:</Col>
+              <Col xs="2" class="text-start fw-bold">Motivation</Col>
               <Col xs="10" class="text-start long-text">{app.motivation}</Col>
             </Row>            
           </Container>
