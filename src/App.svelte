@@ -1,11 +1,13 @@
 <script lang="ts">
-
+  
   import { Card, CardHeader, CardBody, CardTitle, CardFooter, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
   import { onMount } from 'svelte';
   import axios from 'axios';
+
+  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT
 
   // based on CEEB codes
   const colleges = [
@@ -20,10 +22,11 @@
   ]
 
   let applications = [];
-  const baseurl = 'http://localhost:3000/api';
+  
   const baseReference = {
         url: ''
       };
+
   const baseAddress = {
         state: '',
         city: '',
@@ -52,14 +55,14 @@
   })
 
   async function getApplications() {
-    await axios.get(`${baseurl}/applications`).then( (r) => {
+    await axios.get(`${apiEndpoint}/applications`).then( (r) => {
       // console.log(`r.data ${JSON.stringify(r.data)}`);
       applications = r.data;      
     });
   }
 
   async function deleteApplication(id, partitionKey) {
-    await axios.delete(`${baseurl}/applications/${id}/${partitionKey}`).then( () => getApplications());
+    await axios.delete(`${apiEndpoint}/applications/${id}/${partitionKey}`).then( () => getApplications());
   }
 
 
