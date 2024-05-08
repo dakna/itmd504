@@ -7,7 +7,7 @@
   import { onMount } from 'svelte';
   import axios from 'axios';
 
-  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || "https://itmd504-api.azurewebsites.net:3000/api";
+  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || "https://itmd504-api.azurewebsites.net/api";
 
   // based on CEEB codes
   const colleges = [
