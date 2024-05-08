@@ -47,7 +47,7 @@ app.get("/api/applications", async (req, res) => {
 
   try {
     const querySpec = {
-      query: 'SELECT * FROM a',
+      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl  FROM a',
       parameters: []
     }
 
