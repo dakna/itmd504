@@ -1,11 +1,23 @@
 <script lang="ts">
 
-  import { Card, CardHeader, CardBody, CardTitle, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter } from '@sveltestrap/sveltestrap';
+  import { Card, CardHeader, CardBody, CardTitle, CardFooter, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
   import { onMount } from 'svelte';
   import axios from 'axios';
+
+  // based on CEEB codes
+  const colleges = [
+    {
+      id: '4833',
+      name: 'UNIVERSITY OF CALIFORNIA - BERKELEY'
+    },
+    {
+      id: '3434',
+      name: 'HARVARD UNIVERSITY'
+    }
+  ]
 
   let applications = [];
   const baseurl = 'http://localhost:3000/api';
@@ -49,10 +61,19 @@
   async function deleteApplication(id, partitionKey) {
     await axios.delete(`${baseurl}/applications/${id}/${partitionKey}`).then( () => getApplications());
   }
+
+
   function openModal(app) {
     currentApp = app;
     console.log(`openModal currentApp ${currentApp}`);
     toggleModal();
+  }
+
+  function getCollegeNameById(id) {    
+    let filtered = colleges.filter( college => college.id == id );
+    
+    if (filtered.length == 1) return filtered[0].name
+    else throw new Error(`Found more than one college for id ${id}`);
   }
   
 </script>
@@ -77,15 +98,42 @@
 
 	    <div class="load-info">Loaded {applications.length} applications</div>
       {#each applications as app}
-      <Container fluid>
+      <Container sm class="my-3">
         <Card>
           <CardHeader>
-            <CardTitle>{app.firstName} {app.lastName}</CardTitle>
-            <Button on:click={() => openModal(app)}>Edit</Button>
-            <Button on:click={() => deleteApplication(app.id, app.partitionKey)}>Delete</Button>
+            <CardTitle id="title_{app.id}">{app.firstName} {app.lastName}</CardTitle>
+            <Tooltip target="title_{app.id}" placement="top" delay="2000">ID: {app.id}</Tooltip>              
           </CardHeader>
         
-        <CardBody><code>{JSON.stringify(app)}</code></CardBody>        
+        <CardBody>
+          <Container>
+            <Row class="my-2">
+              <Col xs="2" class="text-start fw-bold">First Name:</Col>
+              <Col xs="2" class="text-start">{app.firstName}</Col>
+              <Col xs="2" class="text-start fw-bold">Last Name:</Col>
+              <Col xs="2" class="text-start">{app.lastName}</Col>
+              <Col xs="2" class="text-start fw-bold">Resume:</Col>
+              <Col xs="2" class="text-start long-text"><a target="new" href="{app.resumeUrl}">Download</a></Col>
+            </Row>
+            <Row class="my-2">
+              <Col xs="2" class="text-start fw-bold">College:</Col>
+              <Col xs="10" class="text-start">{getCollegeNameById(app.collegeId)}</Col>
+            </Row>
+            <Row class="my-2">
+              <Col xs="2" class="text-start fw-bold">Adress:</Col>
+              <Col xs="10" class="text-start">{app.address.city}, {app.address.state}</Col>
+            </Row>
+            <Row class="my-2">
+              <Col xs="2" class="text-start fw-bold">Motivation:</Col>
+              <Col xs="10" class="text-start long-text">{app.motivation}</Col>
+            </Row>            
+          </Container>
+          <code>{JSON.stringify(app)}</code>
+        </CardBody> 
+        <CardFooter>
+          <Button color="primary" on:click={() => openModal(app)}>Edit</Button>
+          <Button color="danger" on:click={() => deleteApplication(app.id, app.partitionKey)}>Delete</Button>
+        </CardFooter>       
         </Card>
       </Container>
       {/each}
@@ -115,4 +163,11 @@
   .load-info {
     color: #888;
   }
+
+  .long-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
 </style>
