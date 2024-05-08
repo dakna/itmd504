@@ -1,5 +1,5 @@
 <script lang="ts">
-  
+
   import { Card, CardHeader, CardBody, CardTitle, CardFooter, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
@@ -7,7 +7,7 @@
   import { onMount } from 'svelte';
   import axios from 'axios';
 
-  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT
+  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || "https://itmd504.azurewebsites.net:3000/api";
 
   // based on CEEB codes
   const colleges = [
