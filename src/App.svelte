@@ -37,7 +37,7 @@
         collegeId: '',
         partitionKey: '',
         firstName: '',
-        lastName: 'Smith',
+        lastName: '',
         address: baseAddress,  
         references: [],
         motivation: '',
@@ -49,6 +49,7 @@
 
   let isModalOpen = false;
   let toggleModal = () => (isModalOpen = !isModalOpen);
+  let isModalEditMode = false;
 
   onMount( async() => {
     getApplications();
@@ -72,11 +73,21 @@
     .then( () => isModalOpen = false);
   }
 
+  async function addApplication(app) {
+    console.log(`updateApplication app ${JSON.stringify(app)}`);
+  }
 
-
-  function openModal(app) {
+  function openEditModal(app) {
     currentApp = JSON.parse(JSON.stringify(app));
     //console.log(`openModal currentApp ${JSON.stringify(currentApp)}`);
+    isModalEditMode = true;
+    toggleModal();
+  }
+
+  function openNewModal() {
+    currentApp = JSON.parse(JSON.stringify(baseApp));
+    //console.log(`openModal currentApp ${JSON.stringify(currentApp)}`);
+    isModalEditMode = false;
     toggleModal();
   }
 
@@ -101,7 +112,7 @@
   <h1>Vite + Svelte</h1>
 
   <Counter />
-  
+  <Button color="primary" on:click={() => openNewModal()}>Add new application</Button>
 
   {#await applications}
 	<div class="load-info">...waiting for applications</div>
@@ -139,7 +150,7 @@
           <code>{JSON.stringify(app)}</code>
         </CardBody> 
         <CardFooter>
-          <Button color="primary" on:click={() => openModal(app)}>Edit</Button>
+          <Button color="primary" on:click={() => openEditModal(app)}>Edit</Button>
           <Button color="danger" on:click={() => deleteApplication(app.id, app.partitionKey)}>Delete</Button>
         </CardFooter>       
         </Card>
@@ -150,7 +161,15 @@
 	<p>An error occurred: {error}</p>
   {/await}
 
-  <Modal body header="{currentApp.firstName} {currentApp.lastName}" size="lg" isOpen={isModalOpen} toggle={toggleModal}>
+  <Modal body  size="lg" isOpen={isModalOpen} toggle={toggleModal}>
+    <ModalHeader>
+      {#if isModalEditMode }
+      Edit
+      {:else}
+      Add new
+      {/if}
+      application: {currentApp.firstName} {currentApp.lastName}
+    </ModalHeader>
     <Form>
       <Row>
         <Col>      
@@ -185,8 +204,12 @@
       </Row>            
     </Form>
     <ModalFooter>
-      <Button color="primary" on:click={() => updateApplication(currentApp)}>Save</Button>
-      <Button color="danger" on:click={() => isModalOpen = false}>Cancel</Button>
+      {#if isModalEditMode }
+      <Button color="primary" on:click={() => updateApplication(currentApp)}>Update</Button>  
+      {:else}
+      <Button color="primary" on:click={() => addApplication(currentApp)}>Add</Button>  
+      {/if}
+      <Button on:click={() => isModalOpen = false}>Cancel</Button>
     </ModalFooter>
     <!-- <code>{JSON.stringify(currentApp)}</code> -->
   </Modal>
