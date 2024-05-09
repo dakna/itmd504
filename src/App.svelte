@@ -1,6 +1,16 @@
 <script lang="ts">
 
-  import { Card, CardHeader, CardBody, CardTitle, CardFooter, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip, Form, FormGroup, Input } from '@sveltestrap/sveltestrap';
+  import { 
+    Card, CardHeader, CardBody, CardTitle, CardFooter, 
+    Container, Row, Col, 
+    Button, 
+    Modal, ModalHeader, ModalBody, ModalFooter, 
+    Tooltip, 
+    Form, FormGroup, 
+    Input, 
+    Dropdown, DropdownItem, DropdownMenu, DropdownToggle 
+  } from '@sveltestrap/sveltestrap';
+
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
@@ -121,18 +131,16 @@
 </script>
 
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
-
-  <Counter />
-  <Button color="primary" on:click={() => openNewModal()}>Add new application</Button>
+  <h3>2024 College Applications</h3>
+  <div><small class="text-muted my-5">Demo SPA for itmd504 using Svelte <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" /></small></div>
+  <Container sm class="mt-5">
+    <Row>
+      <Col class="text-start"><Counter /></Col>
+      <Col class="text-end"><Button color="primary" on:click={() => openNewModal()}>Add new application</Button></Col>
+    </Row>
+  </Container>
+  
+  
 
   {#await applications}
 	<div class="load-info">...waiting for applications</div>
@@ -167,7 +175,7 @@
               <Col xs="10" class="text-start long-text">{app.motivation}</Col>
             </Row>            
           </Container>
-          <code>{JSON.stringify(app)}</code>
+          <!-- <code>{JSON.stringify(app)}</code> -->
         </CardBody> 
         <CardFooter>
           <Button color="primary" on:click={() => openEditModal(app)}>Edit</Button>
@@ -252,8 +260,8 @@
 
 <style>
   .logo {
-    height: 6em;
-    padding: 1.5em;
+    height: 1.5em;
+    padding: 0.1em;
     will-change: filter;
     transition: filter 300ms;
   }
