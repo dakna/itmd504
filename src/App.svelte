@@ -67,7 +67,9 @@
 
   async function updateApplication(app) {
     console.log(`updateApplication app ${JSON.stringify(app)}`);
-    //await axios.delete(`${apiEndpoint}/applications/${id}/${partitionKey}`).then( () => getApplications());
+    await axios.put(`${apiEndpoint}/applications/${app.id}/${app.partitionKey}`, app)
+    .then( () => getApplications())
+    .then( () => isModalOpen = false);
   }
 
 
