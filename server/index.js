@@ -32,6 +32,7 @@ const startupDate = new Date();
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.listen(port, () => {
   console.log("API server listening on port", port);
@@ -67,6 +68,30 @@ app.get("/api/applications", async (req, res) => {
   
 });
 
+app.put("/api/applications/:id/:partitionKey", async (req, res) => {
+  console.log(`requested ${req.path}`);
+
+  try {
+    const id = req.params.id;
+    const partitionKey = req.params.partitionKey;
+    const updatedApplication = req.body;
+
+    //console.log(`updatedApplication ${updatedApplication}`);
+
+    const { item } = await container.item(id, partitionKey).replace(updatedApplication);
+
+    console.log(`${req.path} updated application with id ${item.id}`);
+    res.status(200).send();
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send(err.message);
+
+  }
+  
+});
+
 app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
   console.log(`requested ${req.path}`);
   
@@ -77,7 +102,7 @@ app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
 
     const { item } = await container.item(id, partitionKey).delete();
 
-    console.log(`${req.path} deleted item ${item.id}`);
+    console.log(`${req.path} deleted application with id ${item.id}`);
     res.status(200).send();
 
   } catch (err) {
