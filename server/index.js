@@ -187,7 +187,7 @@ app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
   
 });
 
-app.post("/api/seed-applications", async (req, res) => {
+app.post("/api/reset-applications", async (req, res) => {
   console.log(`requested ${req.method} ${req.path}`);
 
   try {
@@ -198,6 +198,9 @@ app.post("/api/seed-applications", async (req, res) => {
     console.log(`Created database: ${databaseId}\nCreated container: ${containerId} `);
 
     const container = client.database(databaseId).container(containerId);
+
+    await container.delete();
+    await client.database(databaseId).containers.createIfNotExists({ id: containerId, partitionKey })
 
     let response = await container.items.upsert(seedApplications.SEED1);
     console.log(`${req.path} inserted application with id ${response.item.id}`);

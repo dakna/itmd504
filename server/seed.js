@@ -21,6 +21,7 @@ export const seedApplications = {
         ],
         motivation: 'Lorem Ipsum',
         resumeUrl: 'http://www.example.com/',
+        score: 3,
       },
       SEED2: {
         id: seedTwoId,
@@ -39,5 +40,6 @@ export const seedApplications = {
         ],
         motivation: 'Lorem Ipsum 2',
         resumeUrl: 'http://www.example.com/',
+        score: 2
       }
 }; 
