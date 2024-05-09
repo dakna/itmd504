@@ -7,7 +7,7 @@ export const seedApplications = {
     SEED1: {
         id: seedOneId,
         collegeId: '3434',
-        partitionKey: 'WA',
+        partitionKey: 'EAST',
         firstName: 'John',
         lastName: 'Smith',
         address: {
@@ -25,7 +25,7 @@ export const seedApplications = {
       SEED2: {
         id: seedTwoId,
         collegeId: '4833',
-        partitionKey: 'CA',
+        partitionKey: 'EAST',
         firstName: 'Michael',
         lastName: 'Turner',
         address: {

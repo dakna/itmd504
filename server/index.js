@@ -3,6 +3,7 @@ dotenv.config({
     path: ".env.server"
 })
 
+import { Guid } from 'js-guid';
 import cors from "cors";
 import { seedApplications } from "./seed.js";
 
@@ -14,6 +15,7 @@ const key = process.env.COSMOS_DB_KEY;
 const databaseId = process.env.COSMOS_DB_ID;
 const containerId = process.env.COSMOS_DB_CONTAINER;
 const partitionKey = { kind: 'Hash', paths: ['/partitionKey'] }
+const defaultPartitionKey = 'EAST';
 
 const options = {
       endpoint: endpoint,
@@ -67,6 +69,30 @@ app.get("/api/applications", async (req, res) => {
   
 });
 
+app.post("/api/applications", async (req, res) => {
+  console.log(`requested ${req.method} ${req.path}`);
+
+  try {
+    const newApplication = req.body;
+    newApplication.id = Guid.newGuid().toString();
+    newApplication.partitionKey = defaultPartitionKey;
+
+    console.log(`newApplication ${JSON.stringify(newApplication)}`);
+
+    const { item } = await container.items.create(newApplication);
+
+    console.log(`${req.path} created application with id ${item.id}`);
+    res.status(200).json(newApplication);
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send(err.message);
+
+  }
+  
+});
+
 app.put("/api/applications/:id/:partitionKey", async (req, res) => {
   console.log(`requested ${req.path}`);
 
@@ -75,7 +101,7 @@ app.put("/api/applications/:id/:partitionKey", async (req, res) => {
     const partitionKey = req.params.partitionKey;
     const updatedApplication = req.body;
 
-    //console.log(`updatedApplication ${updatedApplication}`);
+    //console.log(`updatedApplication ${JSON.stringify(updatedApplication)}`);
 
     const { item } = await container.item(id, partitionKey).replace(updatedApplication);
 
