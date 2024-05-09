@@ -40,12 +40,15 @@ app.listen(port, () => {
   console.log("API server listening on port", port);
 });
 
-app.get("/api/healthcheck", (req, res) => {
+app.get("/api/healthcheck", (req, res) => {  
+  console.log(`requested ${req.method} ${req.path}`);
+
   res.json({ message: `API is running since ${startupDate.toISOString()} using databaseId ${databaseId}, containerId ${containerId}` });
+
 });
 
 app.get("/api/applications", async (req, res) => {
-  console.log(`requested ${req.path}`);
+  console.log(`requested ${req.method} ${req.path}`);
   
   try {
     const querySpec = {
@@ -57,8 +60,54 @@ app.get("/api/applications", async (req, res) => {
       .query(querySpec)
       .fetchAll();
       
-    console.log(`${req.path} returned \n${JSON.stringify(results)}\n`)
+    console.log(`${req.path} returned applications \n${JSON.stringify(results)}\n`)
     res.status(200).json(results);
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send(err.message);
+
+  }
+  
+});
+
+app.get("/api/applications/:id/:partitionKey", async (req, res) => {
+  console.log(`requested ${req.method} ${req.path}`);
+
+  try {
+    const id = req.params.id;
+    const partitionKey = req.params.partitionKey;
+
+    const querySpec = {
+      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl  FROM a where a.id = @id and a.partitionKey = @partitionKey',
+      parameters: [
+        {
+          "name": "@id",
+          "value": id
+        },         {
+          "name": "@partitionKey",
+          "value": partitionKey
+        }          
+      ]
+    }
+
+    // console.log(`querySpec ${JSON.stringify(querySpec)}`)
+
+    const { resources: results } = await container.items
+      .query(querySpec)
+      .fetchAll();
+
+    if (results.length == 1) {
+
+      console.log(`${req.path} returned application with id ${results[0].id}`);
+      res.status(200).json(results[0]);
+    
+    } else if (results.length > 1) {
+      throw Error(`Found more than one application with id ${id} and partitionKey ${partitionKey}`)
+    } else { 
+      throw Error(`Unable to find application with id ${id} and partitionKey ${partitionKey}`)
+    }
 
   } catch (err) {
 
@@ -94,7 +143,7 @@ app.post("/api/applications", async (req, res) => {
 });
 
 app.put("/api/applications/:id/:partitionKey", async (req, res) => {
-  console.log(`requested ${req.path}`);
+  console.log(`requested ${req.method} ${req.path}`);
 
   try {
     const id = req.params.id;
@@ -118,7 +167,7 @@ app.put("/api/applications/:id/:partitionKey", async (req, res) => {
 });
 
 app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
-  console.log(`requested ${req.path}`);
+  console.log(`requested ${req.method} ${req.path}`);
   
   try {
     const id = req.params.id;
@@ -139,7 +188,7 @@ app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
 });
 
 app.post("/api/seed-applications", async (req, res) => {
-  console.log(`requested ${req.path}`);
+  console.log(`requested ${req.method} ${req.path}`);
 
   try {
 
