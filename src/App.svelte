@@ -101,17 +101,21 @@
   }
 
   function handleModalFormSubmit(e) {
-    //e.preventDefault();
-    console.log(`isModalEditMode ${isModalEditMode}`);
+    e.preventDefault();
+    //console.log(`isModalEditMode ${isModalEditMode}`);
 
+    if (isModalEditMode) updateApplication(currentApp);
+    else addApplication(currentApp);    
   }
 
-  function getCollegeNameById(id) {    
+  function getCollegeNameById(id) {
+    let ret = '';    
     let filtered = colleges.filter( college => college.id == id );
     
-    if (filtered.length == 1) return filtered[0].name
-    //else throw new Error(`Unable to find college for id ${id}`);
-    else return '';
+    if (filtered.length == 1) ret = filtered[0].name
+    else console.error(`Unable to find college for id ${id}`);
+    
+    return ret;
   }
   
 </script>
@@ -178,10 +182,7 @@
   {/await}
 
   <Modal size="lg" isOpen={isModalOpen} toggle={toggleModal}>
-    <Form validated={isModalFormValidated} on:submit={(e) => {
-      e.preventDefault();
-      handleModalFormSubmit(e);
-      }}>
+    <Form validated={isModalFormValidated} on:submit={(e) => handleModalFormSubmit(e)}>
     <ModalHeader>
       {#if isModalEditMode }
       Edit
@@ -195,24 +196,24 @@
       <Row>
         <Col>      
           <FormGroup floating>
-          <Input placeholder="Enter a value" bind:value={currentApp.firstName}/><div slot="label">First Name</div>
+          <Input placeholder="Enter a value" bind:value={currentApp.firstName} feedback="This requires a value" required/><div slot="label">First Name</div>
           </FormGroup>
         </Col>      
         <Col>
           <FormGroup floating>
-          <Input placeholder="Enter a value" bind:value={currentApp.lastName}/><div slot="label">Last Name</div>
+          <Input placeholder="Enter a value" bind:value={currentApp.lastName} feedback="This requires a value" required/><div slot="label">Last Name</div>
           </FormGroup>
         </Col>
       </Row>
       <Row>
         <Col>      
           <FormGroup floating>
-          <Input placeholder="Enter a value" bind:value={currentApp.address.city}/><div slot="label">City</div>
+          <Input placeholder="Enter a value" bind:value={currentApp.address.city} feedback="This requires a value" required/><div slot="label">City</div>
           </FormGroup>
         </Col>      
         <Col>
           <FormGroup floating>
-          <Input placeholder="Enter a value" bind:value={currentApp.address.state}/><div slot="label">State</div>
+          <Input placeholder="Enter a value" bind:value={currentApp.address.state} feedback="This requires a value" required/><div slot="label">State</div>
           </FormGroup>
         </Col>
       </Row>
@@ -231,23 +232,20 @@
       <Row>
         <Col>      
           <FormGroup floating>
-          <Input type="textarea" placeholder="Enter a value" bind:value={currentApp.motivation}/><div slot="label">Motivation</div>
+          <Input style="height: 5em" rows={5} type="textarea" placeholder="Enter a value" bind:value={currentApp.motivation} feedback="This requires a value" required/><div slot="label">Motivation</div>
           </FormGroup>
         </Col>
       </Row>            
     </ModalBody>
     <ModalFooter>
       {#if isModalEditMode }
-      <Button type="submit" color="primary" on:click={() => updateApplication(currentApp)}>Update</Button>  
+      <Button type="submit" color="primary" on:click={() => isModalFormValidated = true}>Update</Button>  
       {:else}
-      <Button type="submit" color="primary" on:click={() => addApplication(currentApp)}>Add</Button>  
+      <Button type="submit" color="primary" on:click={() => isModalFormValidated = true}>Add</Button>  
       {/if}
       <Button on:click={() => resetModal()}>Cancel</Button>
-      <Button type="submit" on:click={() => isModalFormValidated = true}>Validate</Button>
-      <Button type="submit">Test</Button>
     </ModalFooter>
   </Form>  
-    <!-- <code>{JSON.stringify(currentApp)}</code> -->
   </Modal>
 
 </main>
