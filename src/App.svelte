@@ -13,11 +13,11 @@
   const colleges = [
     {
       id: '4833',
-      name: 'UNIVERSITY OF CALIFORNIA - BERKELEY'
+      name: 'University of California - Berkeley'
     },
     {
       id: '3434',
-      name: 'HARVARD UNIVERSITY'
+      name: 'Harvard University'
     }
   ]
 
@@ -74,7 +74,10 @@
   }
 
   async function addApplication(app) {
-    console.log(`updateApplication app ${JSON.stringify(app)}`);
+    console.log(`addApplication app ${JSON.stringify(app)}`);
+    await axios.post(`${apiEndpoint}/applications`, app)
+    .then( () => getApplications())
+    .then( () => isModalOpen = false);
   }
 
   function openEditModal(app) {
@@ -95,7 +98,7 @@
     let filtered = colleges.filter( college => college.id == id );
     
     if (filtered.length == 1) return filtered[0].name
-    else throw new Error(`Found more than one college for id ${id}`);
+    else throw new Error(`Unable to find college for id ${id}`);
   }
   
 </script>
@@ -135,12 +138,12 @@
               <Col xs="4" class="text-end"><a target="new" href="{app.resumeUrl}">Download Resume</a></Col>
             </Row>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">College</Col>
-              <Col xs="10" class="text-start">{getCollegeNameById(app.collegeId)}</Col>
-            </Row>
-            <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">Adress</Col>
               <Col xs="10" class="text-start">{app.address.city}, {app.address.state}</Col>
+            </Row>
+            <Row class="my-2">
+              <Col xs="2" class="text-start fw-bold">College</Col>
+              <Col xs="10" class="text-start">{getCollegeNameById(app.collegeId)}</Col>
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">Motivation</Col>
@@ -195,6 +198,18 @@
           </FormGroup>
         </Col>
       </Row>
+      <Row>
+        <Col>      
+          <FormGroup floating>
+          <Input type="select" bind:value={currentApp.collegeId}>
+            {#each colleges as college}
+            <option value="{college.id}">{college.name}</option>  
+            {/each}
+          </Input>
+          <div slot="label">College</div>
+          </FormGroup>
+        </Col>
+      </Row>       
       <Row>
         <Col>      
           <FormGroup floating>
