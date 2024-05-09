@@ -5,11 +5,11 @@
     Container, Row, Col, 
     Button, 
     Modal, ModalHeader, ModalBody, ModalFooter, 
-    Tooltip, Badge,
+    Tooltip, Badge, Icon, Popover,
     Form, FormGroup, 
     Input, 
     Dropdown, DropdownItem, DropdownMenu, DropdownToggle, 
-    Progress
+    Progress,
 
   } from '@sveltestrap/sveltestrap';
 
@@ -55,6 +55,8 @@
 
   const topScoreThreshold = 3;
   let showTopScoreOnly = false;
+  const minScore = 1;
+  const maxScore = 5;
 
   let applications = getApplications();
   
@@ -199,7 +201,7 @@
 	    <div class="load-info">Loaded {results.length} applications</div>
       {#each results as app}
       {#if !showTopScoreOnly || (showTopScoreOnly && app.score >= topScoreThreshold)}
-      <Container sm class="my-3">
+      <Container sm class="my-5">
         <Card>          
           <CardHeader>            
             <CardTitle id="title_{app.id}">{app.firstName} {app.lastName}</CardTitle>
@@ -214,11 +216,21 @@
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">Name</Col>
               <Col xs="6" class="text-start">{app.firstName} {app.lastName}</Col>
-              <Col xs="4" class="text-end"><a target="new" href="{app.resumeUrl}">Download Resume</a></Col>
+              <Col xs="2" class="text-start fw-bold">Score 
+                <Icon id="score-icon-{app.id}" class="text-info mx-1" name="info-circle"/>
+                <Popover target="score-icon-{app.id}" trigger='hover' placement="bottom" title="Range Info">
+                  Scores have a range of {minScore} to {maxScore}.
+                </Popover>
+              </Col>
+              <Col xs="2" class="text-start">{app.score}</Col>
+              <Col xs="1" class="text-end"></Col>
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">Adress</Col>
-              <Col xs="10" class="text-start">{app.address.city}, {getStateNameByCode(app.address.state)}</Col>
+              <Col xs="6" class="text-start">{app.address.city}, {getStateNameByCode(app.address.state)}</Col>
+              <Col xs="2" class="text-start fw-bold">Resume</Col>
+              <Col xs="2" class="text-start"><a target="new" href="{app.resumeUrl}">Download</a></Col>
+
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">College</Col>
@@ -229,7 +241,7 @@
               <Col xs="10" class="text-start long-text">{app.motivation}</Col>
             </Row>            
           </Container>
-          <code>{JSON.stringify(app)}</code>
+          <!-- <code>{JSON.stringify(app)}</code> -->
         </CardBody> 
         <CardFooter>
           <Button color="primary" on:click={() => openEditModal(app)}>Edit</Button>
