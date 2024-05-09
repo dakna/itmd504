@@ -102,7 +102,8 @@
   }
 
   async function deleteApplication(id, partitionKey) {
-    await axios.delete(`${apiEndpoint}/applications/${id}/${partitionKey}`).then( () => getApplications());
+    await axios.delete(`${apiEndpoint}/applications/${id}/${partitionKey}`)
+    .then( () => reloadApplications());
   }
 
   async function updateApplication(app) {
