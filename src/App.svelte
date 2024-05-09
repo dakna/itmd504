@@ -1,6 +1,6 @@
 <script lang="ts">
 
-  import { Card, CardHeader, CardBody, CardTitle, CardFooter, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@sveltestrap/sveltestrap';
+  import { Card, CardHeader, CardBody, CardTitle, CardFooter, Container, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Tooltip, Form, FormGroup, Input } from '@sveltestrap/sveltestrap';
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
@@ -45,7 +45,7 @@
       };
 
     
-  let currentApp = baseApp;
+  let currentApp = JSON.parse(JSON.stringify(baseApp));
 
   let isModalOpen = false;
   let toggleModal = () => (isModalOpen = !isModalOpen);
@@ -65,10 +65,16 @@
     await axios.delete(`${apiEndpoint}/applications/${id}/${partitionKey}`).then( () => getApplications());
   }
 
+  async function updateApplication(app) {
+    console.log(`updateApplication app ${JSON.stringify(app)}`);
+    //await axios.delete(`${apiEndpoint}/applications/${id}/${partitionKey}`).then( () => getApplications());
+  }
+
+
 
   function openModal(app) {
-    currentApp = app;
-    console.log(`openModal currentApp ${currentApp}`);
+    currentApp = JSON.parse(JSON.stringify(app));
+    //console.log(`openModal currentApp ${JSON.stringify(currentApp)}`);
     toggleModal();
   }
 
@@ -111,16 +117,16 @@
         <CardBody>
           <Container>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">Name:</Col>
+              <Col xs="2" class="text-start fw-bold">Name</Col>
               <Col xs="6" class="text-start">{app.firstName} {app.lastName}</Col>
               <Col xs="4" class="text-end"><a target="new" href="{app.resumeUrl}">Download Resume</a></Col>
             </Row>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">College:</Col>
+              <Col xs="2" class="text-start fw-bold">College</Col>
               <Col xs="10" class="text-start">{getCollegeNameById(app.collegeId)}</Col>
             </Row>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">Adress:</Col>
+              <Col xs="2" class="text-start fw-bold">Adress</Col>
               <Col xs="10" class="text-start">{app.address.city}, {app.address.state}</Col>
             </Row>
             <Row class="my-2">
@@ -142,8 +148,45 @@
 	<p>An error occurred: {error}</p>
   {/await}
 
-  <Modal body header="{currentApp.firstName} {currentApp.lastName}" isOpen={isModalOpen} toggle={toggleModal}>
-    <code>{JSON.stringify(currentApp)}</code>
+  <Modal body header="{currentApp.firstName} {currentApp.lastName}" size="lg" isOpen={isModalOpen} toggle={toggleModal}>
+    <Form>
+      <Row>
+        <Col>      
+          <FormGroup floating>
+          <Input placeholder="Enter a value" bind:value={currentApp.firstName}/><div slot="label">First Name</div>
+          </FormGroup>
+        </Col>      
+        <Col>
+          <FormGroup floating>
+          <Input placeholder="Enter a value" bind:value={currentApp.lastName}/><div slot="label">Last Name</div>
+          </FormGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col>      
+          <FormGroup floating>
+          <Input placeholder="Enter a value" bind:value={currentApp.address.city}/><div slot="label">City</div>
+          </FormGroup>
+        </Col>      
+        <Col>
+          <FormGroup floating>
+          <Input placeholder="Enter a value" bind:value={currentApp.address.state}/><div slot="label">State</div>
+          </FormGroup>
+        </Col>
+      </Row>
+      <Row>
+        <Col>      
+          <FormGroup floating>
+          <Input type="textarea" placeholder="Enter a value" bind:value={currentApp.motivation}/><div slot="label">Motivation</div>
+          </FormGroup>
+        </Col>
+      </Row>            
+    </Form>
+    <ModalFooter>
+      <Button color="primary" on:click={() => updateApplication(currentApp)}>Save</Button>
+      <Button color="danger" on:click={() => isModalOpen = false}>Cancel</Button>
+    </ModalFooter>
+    <!-- <code>{JSON.stringify(currentApp)}</code> -->
   </Modal>
 </main>
 
