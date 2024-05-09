@@ -45,7 +45,6 @@ app.get("/api/healthcheck", (req, res) => {
 app.get("/api/applications", async (req, res) => {
   console.log(`requested ${req.path}`);
   
-
   try {
     const querySpec = {
       query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl  FROM a',
@@ -95,7 +94,6 @@ app.put("/api/applications/:id/:partitionKey", async (req, res) => {
 app.delete("/api/applications/:id/:partitionKey", async (req, res) => {
   console.log(`requested ${req.path}`);
   
-
   try {
     const id = req.params.id;
     const partitionKey = req.params.partitionKey;
