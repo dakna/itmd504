@@ -5,7 +5,7 @@
     Container, Row, Col, 
     Button, 
     Modal, ModalHeader, ModalBody, ModalFooter, 
-    Tooltip, 
+    Tooltip, Badge,
     Form, FormGroup, 
     Input, 
     Dropdown, DropdownItem, DropdownMenu, DropdownToggle, 
@@ -52,6 +52,9 @@
   ];
 
   let stateFilter = '';
+
+  const topScoreThreshold = 3;
+  let showTopScoreOnly = false;
 
   let applications = getApplications();
   
@@ -179,7 +182,7 @@
   <div><small class="text-muted my-5">Demo SPA for itmd504 using Svelte <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" /></small></div>
   <Container sm class="mt-5">
     <Row>
-      <Col class="text-start"><Counter /></Col>
+      <Col class="text-start"><Input type="switch" bind:checked={showTopScoreOnly} label="Show only top scores" /></Col>
       <Col class="text-end"><Button color="primary" on:click={() => openNewModal()}>Add new application</Button></Col>
     </Row>
   </Container>
@@ -195,10 +198,14 @@
 
 	    <div class="load-info">Loaded {results.length} applications</div>
       {#each results as app}
+      {#if !showTopScoreOnly || (showTopScoreOnly && app.score >= topScoreThreshold)}
       <Container sm class="my-3">
-        <Card>
-          <CardHeader>
+        <Card>          
+          <CardHeader>            
             <CardTitle id="title_{app.id}">{app.firstName} {app.lastName}</CardTitle>
+            {#if app.score >= topScoreThreshold}
+            <Badge positioned color="warning">Top Score</Badge>
+            {/if}
             <Tooltip target="title_{app.id}" placement="top" delay="2000">ID: {app.id}</Tooltip>              
           </CardHeader>
         
@@ -222,7 +229,7 @@
               <Col xs="10" class="text-start long-text">{app.motivation}</Col>
             </Row>            
           </Container>
-          <!-- <code>{JSON.stringify(app)}</code> -->
+          <code>{JSON.stringify(app)}</code>
         </CardBody> 
         <CardFooter>
           <Button color="primary" on:click={() => openEditModal(app)}>Edit</Button>
@@ -230,6 +237,7 @@
         </CardFooter>       
         </Card>
       </Container>
+      {/if}
       {/each}
   
       {:catch error}

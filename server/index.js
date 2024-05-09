@@ -52,7 +52,7 @@ app.get("/api/applications", async (req, res) => {
   
   try {
     const querySpec = {
-      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl  FROM a',
+      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl, a.score FROM a',
       parameters: []
     }
 
@@ -80,7 +80,7 @@ app.get("/api/applications/:id/:partitionKey", async (req, res) => {
     const partitionKey = req.params.partitionKey;
 
     const querySpec = {
-      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl  FROM a where a.id = @id and a.partitionKey = @partitionKey',
+      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl, a.score  FROM a where a.id = @id and a.partitionKey = @partitionKey',
       parameters: [
         {
           "name": "@id",
