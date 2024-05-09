@@ -8,11 +8,12 @@
     Tooltip, 
     Form, FormGroup, 
     Input, 
-    Dropdown, DropdownItem, DropdownMenu, DropdownToggle 
+    Dropdown, DropdownItem, DropdownMenu, DropdownToggle, 
+    Progress
+
   } from '@sveltestrap/sveltestrap';
 
   import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
   import { onMount } from 'svelte';
   import axios from 'axios';
@@ -29,9 +30,30 @@
       id: '3434',
       name: 'Harvard University'
     }
-  ]
+  ];
 
-  let applications = [];
+  const states = [
+    {
+      code: 'CA',
+      name: 'California'
+    },
+    {
+      code: 'IL',
+      name: 'Illinois'
+    },  
+    {
+      code: 'MI',
+      name: 'Michigan'
+    },
+    {
+      code: 'WA',
+      name: 'Washington'
+    }  
+  ];
+
+  let stateFilter = '';
+
+  let applications = getApplications();
   
   const baseReference = {
         url: ''
@@ -58,19 +80,25 @@
   let currentApp = JSON.parse(JSON.stringify(baseApp));
 
   let isModalOpen = false;
+  let isModalCancelled = false;
   let toggleModal = () => (isModalOpen = !isModalOpen);
   let isModalEditMode = false;
   let isModalFormValidated = false;
 
   onMount( async() => {
-    getApplications();
+    applications = getApplications();
   })
 
+  function reloadApplications() {
+    applications = getApplications();
+  }
+
   async function getApplications() {
-    await axios.get(`${apiEndpoint}/applications`).then( (r) => {
-      // console.log(`r.data ${JSON.stringify(r.data)}`);
-      applications = r.data;      
-    });
+    const res = await axios.get(`${apiEndpoint}/applications`);
+    const data = await res.data;
+    // delay to clearly show loading action to user, promise bar flickers on fast networks.
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return data;
   }
 
   async function deleteApplication(id, partitionKey) {
@@ -80,14 +108,14 @@
   async function updateApplication(app) {
     console.log(`updateApplication app ${JSON.stringify(app)}`);
     await axios.put(`${apiEndpoint}/applications/${app.id}/${app.partitionKey}`, app)
-    .then( () => getApplications())
+    .then( () => reloadApplications())
     .then( () => resetModal());
   }
 
   async function addApplication(app) {
     console.log(`addApplication app ${JSON.stringify(app)}`);
     await axios.post(`${apiEndpoint}/applications`, app)
-    .then( () => getApplications())
+    .then( () => reloadApplications())
     .then( () => resetModal());
   }
 
@@ -105,6 +133,7 @@
     toggleModal();
   }
   function resetModal() {
+    isModalCancelled = false;
     isModalEditMode = false;
     isModalOpen = false;
     isModalFormValidated = false;
@@ -113,6 +142,10 @@
   function handleModalFormSubmit(e) {
     e.preventDefault();
     //console.log(`isModalEditMode ${isModalEditMode}`);
+    if (isModalCancelled) {
+      resetModal()
+      return;
+    }
 
     if (isModalEditMode) updateApplication(currentApp);
     else addApplication(currentApp);    
@@ -127,6 +160,16 @@
     
     return ret;
   }
+
+  function getStateNameByCode(code) {
+    let ret = '';    
+    let filtered = states.filter( state => state.code == code );
+    
+    if (filtered.length == 1) ret = filtered[0].name
+    else console.error(`Unable to find state for code ${code}`);
+    
+    return ret;
+  }  
   
 </script>
 
@@ -143,11 +186,14 @@
   
 
   {#await applications}
-	<div class="load-info">...waiting for applications</div>
-  {:then applications}
+	<div class="load-info">Loading applications</div>
+  <Container sm class="my-3">
+    <Progress animated value={100} class="mb-2" />
+  </Container>
+  {:then results}
 
-	    <div class="load-info">Loaded {applications.length} applications</div>
-      {#each applications as app}
+	    <div class="load-info">Loaded {results.length} applications</div>
+      {#each results as app}
       <Container sm class="my-3">
         <Card>
           <CardHeader>
@@ -164,7 +210,7 @@
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">Adress</Col>
-              <Col xs="10" class="text-start">{app.address.city}, {app.address.state}</Col>
+              <Col xs="10" class="text-start">{app.address.city}, {getStateNameByCode(app.address.state)}</Col>
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">College</Col>
@@ -221,7 +267,12 @@
         </Col>      
         <Col>
           <FormGroup floating>
-          <Input placeholder="Enter a value" bind:value={currentApp.address.state} feedback="This requires a value" required/><div slot="label">State</div>
+            <Input type="select" bind:value={currentApp.address.state} feedback="This requires a value" required>
+              {#each states as state}
+              <option value="{state.code}">{state.name}</option>  
+              {/each}
+            </Input>
+          <div slot="label">State</div>
           </FormGroup>
         </Col>
       </Row>
@@ -251,7 +302,7 @@
       {:else}
       <Button type="submit" color="primary" on:click={() => isModalFormValidated = true}>Add</Button>  
       {/if}
-      <Button on:click={() => resetModal()}>Cancel</Button>
+      <Button on:click={() => isModalCancelled = true}>Cancel</Button>
     </ModalFooter>
   </Form>  
   </Modal>
