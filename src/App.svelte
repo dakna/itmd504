@@ -50,6 +50,7 @@
   let isModalOpen = false;
   let toggleModal = () => (isModalOpen = !isModalOpen);
   let isModalEditMode = false;
+  let isModalFormValidated = false;
 
   onMount( async() => {
     getApplications();
@@ -70,14 +71,14 @@
     console.log(`updateApplication app ${JSON.stringify(app)}`);
     await axios.put(`${apiEndpoint}/applications/${app.id}/${app.partitionKey}`, app)
     .then( () => getApplications())
-    .then( () => isModalOpen = false);
+    .then( () => resetModal());
   }
 
   async function addApplication(app) {
     console.log(`addApplication app ${JSON.stringify(app)}`);
     await axios.post(`${apiEndpoint}/applications`, app)
     .then( () => getApplications())
-    .then( () => isModalOpen = false);
+    .then( () => resetModal());
   }
 
   function openEditModal(app) {
@@ -93,12 +94,24 @@
     isModalEditMode = false;
     toggleModal();
   }
+  function resetModal() {
+    isModalEditMode = false;
+    isModalOpen = false;
+    isModalFormValidated = false;
+  }
+
+  function handleModalFormSubmit(e) {
+    //e.preventDefault();
+    console.log(`isModalEditMode ${isModalEditMode}`);
+
+  }
 
   function getCollegeNameById(id) {    
     let filtered = colleges.filter( college => college.id == id );
     
     if (filtered.length == 1) return filtered[0].name
-    else throw new Error(`Unable to find college for id ${id}`);
+    //else throw new Error(`Unable to find college for id ${id}`);
+    else return '';
   }
   
 </script>
@@ -164,7 +177,11 @@
 	<p>An error occurred: {error}</p>
   {/await}
 
-  <Modal body  size="lg" isOpen={isModalOpen} toggle={toggleModal}>
+  <Modal size="lg" isOpen={isModalOpen} toggle={toggleModal}>
+    <Form validated={isModalFormValidated} on:submit={(e) => {
+      e.preventDefault();
+      handleModalFormSubmit(e);
+      }}>
     <ModalHeader>
       {#if isModalEditMode }
       Edit
@@ -172,8 +189,9 @@
       Add new
       {/if}
       application: {currentApp.firstName} {currentApp.lastName}
-    </ModalHeader>
-    <Form>
+    </ModalHeader>    
+    <ModalBody>
+    
       <Row>
         <Col>      
           <FormGroup floating>
@@ -201,7 +219,7 @@
       <Row>
         <Col>      
           <FormGroup floating>
-          <Input type="select" bind:value={currentApp.collegeId}>
+          <Input type="select" bind:value={currentApp.collegeId} feedback="This requires a value" required>
             {#each colleges as college}
             <option value="{college.id}">{college.name}</option>  
             {/each}
@@ -217,17 +235,21 @@
           </FormGroup>
         </Col>
       </Row>            
-    </Form>
+    </ModalBody>
     <ModalFooter>
       {#if isModalEditMode }
-      <Button color="primary" on:click={() => updateApplication(currentApp)}>Update</Button>  
+      <Button type="submit" color="primary" on:click={() => updateApplication(currentApp)}>Update</Button>  
       {:else}
-      <Button color="primary" on:click={() => addApplication(currentApp)}>Add</Button>  
+      <Button type="submit" color="primary" on:click={() => addApplication(currentApp)}>Add</Button>  
       {/if}
-      <Button on:click={() => isModalOpen = false}>Cancel</Button>
+      <Button on:click={() => resetModal()}>Cancel</Button>
+      <Button type="submit" on:click={() => isModalFormValidated = true}>Validate</Button>
+      <Button type="submit">Test</Button>
     </ModalFooter>
+  </Form>  
     <!-- <code>{JSON.stringify(currentApp)}</code> -->
   </Modal>
+
 </main>
 
 <style>
