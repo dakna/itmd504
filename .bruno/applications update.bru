@@ -1,10 +1,10 @@
 meta {
-  name: applications delete
+  name: applications update
   type: http
-  seq: 4
+  seq: 5
 }
 
-delete {
+put {
   url: http://localhost:3000/api/applications/<GUID>/<PARTKEY>
   body: none
   auth: none
