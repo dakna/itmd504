@@ -307,6 +307,13 @@
         <Col class="col-3">
           <small>Score:</small><span class="mx-2">{currentApp.score}</span><Input type="range" bind:value={currentApp.score} min={minScore} max={maxScore} step={1} placeholder="score placeholder" /> 
         </Col>
+      </Row>
+      <Row>
+        <Col>      
+          <FormGroup floating>
+          <Input type="url" placeholder="Enter a value" bind:value={currentApp.resumeUrl} feedback="This requires a value" required/><div slot="label">Resume URL</div>
+          </FormGroup>
+        </Col> 
       </Row>       
       <Row>
         <Col>      
