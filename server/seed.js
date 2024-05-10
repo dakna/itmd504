@@ -52,8 +52,8 @@ export const seedApplications = {
         id: seedFourId,
         collegeId: '1318',
         partitionKey: 'EAST',
-        firstName: 'Daniel',
-        lastName: 'Knapp',
+        firstName: 'Thomas',
+        lastName: 'Cooper',
         address: {
             state: 'IL',
             city: 'Chicago',            
