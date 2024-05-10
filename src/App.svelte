@@ -222,7 +222,7 @@
               <Col xs="1" class="text-end"></Col>
             </Row>
             <Row class="my-2">
-              <Col xs="2" class="text-start fw-bold">Adress</Col>
+              <Col xs="2" class="text-start fw-bold">Address</Col>
               <Col xs="6" class="text-start">{app.address.city}, {getStateNameByCode(app.address.state)}</Col>
               <Col xs="2" class="text-start fw-bold">Resume</Col>
               <Col xs="2" class="text-start"><a target="new" href="{app.resumeUrl}">Download</a></Col>
