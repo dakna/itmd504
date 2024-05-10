@@ -52,7 +52,7 @@ app.get("/api/applications", async (req, res) => {
   
   try {
     const querySpec = {
-      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl, a.score FROM a',
+      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.motivation, a.resumeUrl, a.score FROM a',
       parameters: []
     }
 
@@ -80,7 +80,7 @@ app.get("/api/applications/:id/:partitionKey", async (req, res) => {
     const partitionKey = req.params.partitionKey;
 
     const querySpec = {
-      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.references, a.motivation, a.resumeUrl, a.score  FROM a where a.id = @id and a.partitionKey = @partitionKey',
+      query: 'SELECT a.id, a.collegeId, a.partitionKey, a.firstName, a.lastName, a.address, a.motivation, a.resumeUrl, a.score  FROM a where a.id = @id and a.partitionKey = @partitionKey',
       parameters: [
         {
           "name": "@id",
@@ -206,6 +206,12 @@ app.post("/api/reset-applications", async (req, res) => {
     console.log(`${req.path} inserted application with id ${response.item.id}`);
     
     response = await container.items.upsert(seedApplications.SEED2);
+    console.log(`${req.path} inserted application with id ${response.item.id}`);
+
+    response = await container.items.upsert(seedApplications.SEED3);
+    console.log(`${req.path} inserted application with id ${response.item.id}`);
+
+    response = await container.items.upsert(seedApplications.SEED4);
     console.log(`${req.path} inserted application with id ${response.item.id}`);
 
     res.status(200).send();

@@ -13,7 +13,6 @@
   } from '@sveltestrap/sveltestrap';
 
   import svelteLogo from './assets/svelte.svg'
-  import Counter from './lib/Counter.svelte'
   import { onMount } from 'svelte';
   import axios from 'axios';
 
@@ -28,6 +27,14 @@
     {
       id: '3434',
       name: 'Harvard University'
+    },
+    {
+      id: '1318',
+      name: 'Illinois Institute of Technology'
+    },
+    {
+      id: '1465',
+      name: 'Michigan State University - East Lansing'
     }
   ];
 
@@ -50,8 +57,6 @@
     }  
   ];
 
-  let stateFilter = '';
-
   const topScoreThreshold = 4;
   const minScore = 1;
   const maxScore = 5;
@@ -59,10 +64,6 @@
 
   let applications = getApplications();
   
-  const baseReference = {
-        url: ''
-      };
-
   const baseAddress = {
         state: '',
         city: '',
@@ -75,7 +76,6 @@
         firstName: '',
         lastName: '',
         address: baseAddress,  
-        references: [],
         motivation: '',
         resumeUrl: '',
         score: 1,
@@ -175,7 +175,7 @@
 
 <main>
   <h3>2024 College Applications</h3>
-  <div><small class="text-muted my-5">Demo SPA for itmd504 using Svelte <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" /></small></div>
+  <div><small class="text-muted my-5">Demo app for itmd504 using Svelte <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" /></small></div>
   <Container sm class="mt-5">
     <Row>
       <Col class="text-start"><Input type="switch" bind:checked={showTopScoreOnly} label="Show only top scores" /></Col>
@@ -234,10 +234,9 @@
             </Row>
             <Row class="my-2">
               <Col xs="2" class="text-start fw-bold">Motivation</Col>
-              <Col xs="10" class="text-start long-text">{app.motivation}</Col>
+              <Col xs="10" class="text-start">{app.motivation}</Col>
             </Row>            
           </Container>
-          <!-- <code>{JSON.stringify(app)}</code> -->
         </CardBody> 
         <CardFooter>
           <Button color="primary" on:click={() => openEditModal(app)}>Edit</Button>
@@ -356,12 +355,6 @@
   }
   .load-info {
     color: #888;
-  }
-
-  .long-text {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
   }
 
 </style>
