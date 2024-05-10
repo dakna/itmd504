@@ -52,7 +52,7 @@
 
   let stateFilter = '';
 
-  const topScoreThreshold = 3;
+  const topScoreThreshold = 4;
   const minScore = 1;
   const maxScore = 5;
   let showTopScoreOnly = false;
