@@ -188,7 +188,9 @@
   {#await applications}
 	<div class="load-info">Loading applications</div>
   <Container sm class="my-3">
-    <Progress animated value={100} class="mb-2" />
+    <Row class="justify-content-md-center">
+      <Col class="col-5"><Progress animated value={100} class="mb-2" /></Col>
+    </Row>
   </Container>
   {:then results}
 
