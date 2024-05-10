@@ -85,7 +85,6 @@
   let currentApp = JSON.parse(JSON.stringify(baseApp));
 
   let isModalOpen = false;
-  let isModalCancelled = false;
   let toggleModal = () => (isModalOpen = !isModalOpen);
   let isModalEditMode = false;
   let isModalFormValidated = false;
@@ -139,7 +138,6 @@
     toggleModal();
   }
   function resetModal() {
-    isModalCancelled = false;
     isModalEditMode = false;
     isModalOpen = false;
     isModalFormValidated = false;
@@ -147,11 +145,7 @@
 
   function handleModalFormSubmit(e) {
     e.preventDefault();
-    //console.log(`isModalEditMode ${isModalEditMode}`);
-    if (isModalCancelled) {
-      resetModal()
-      return;
-    }
+    console.log(`isModalEditMode ${isModalEditMode}`);
 
     if (isModalEditMode) updateApplication(currentApp);
     else addApplication(currentApp);    
@@ -326,7 +320,12 @@
       {:else}
       <Button type="submit" color="primary" on:click={() => isModalFormValidated = true}>Add</Button>  
       {/if}
-      <Button on:click={() => isModalCancelled = true}>Cancel</Button>
+      <Button type="submit" on:click={(e) => 
+        {
+          e.preventDefault();
+          resetModal();
+        }}>Cancel</Button>
+
     </ModalFooter>
   </Form>  
   </Modal>
