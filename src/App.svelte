@@ -8,7 +8,6 @@
     Tooltip, Badge, Icon, Popover,
     Form, FormGroup, 
     Input, 
-    Dropdown, DropdownItem, DropdownMenu, DropdownToggle, 
     Progress,
 
   } from '@sveltestrap/sveltestrap';
@@ -54,9 +53,9 @@
   let stateFilter = '';
 
   const topScoreThreshold = 3;
-  let showTopScoreOnly = false;
   const minScore = 1;
   const maxScore = 5;
+  let showTopScoreOnly = false;
 
   let applications = getApplications();
   
@@ -79,6 +78,7 @@
         references: [],
         motivation: '',
         resumeUrl: '',
+        score: 1,
       };
 
     
@@ -298,7 +298,7 @@
         </Col>
       </Row>
       <Row>
-        <Col>      
+        <Col class="col-9">      
           <FormGroup floating>
           <Input type="select" bind:value={currentApp.collegeId} feedback="This requires a value" required>
             {#each colleges as college}
@@ -307,6 +307,9 @@
           </Input>
           <div slot="label">College</div>
           </FormGroup>
+        </Col>
+        <Col class="col-3">
+          <small>Score:</small><span class="mx-2">{currentApp.score}</span><Input type="range" bind:value={currentApp.score} min={minScore} max={maxScore} step={1} placeholder="score placeholder" /> 
         </Col>
       </Row>       
       <Row>
